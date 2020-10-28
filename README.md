@@ -16,7 +16,7 @@ Fig.1 shows the overall architecture of MRAM, consistingof three main components
 (2) MENN (method expansion network), which enriches the representation of a method with short length by retrieving theinformation from its relevant methods.
 
 (3) FLNN (fault localization network), which predicts faultprobability of a method by combining both its implicit reference and explicit relevance to the bug report.
-![avatar](/fig/model.pdf)
+![avatar](/fig/arc.png)
 
 The high-level goal of MRAM is: given a bug report R and an arbitrary method M with its corresponding features,
 MRAM predicts a high relevance score if M is a faulty method for R, and a low relevance score otherwise.
