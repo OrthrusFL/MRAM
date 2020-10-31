@@ -39,12 +39,12 @@ optional arguments:
 
 ### build vocabulary
 ```
-  python run.py --vocab
+python run.py --vocab
 ``` 
 
 ### parse specific code revision
 ```
- python run.py --parse
+python run.py --parse
 ```
 
 ### prepare data
@@ -55,10 +55,10 @@ python run.py --prepare
 
 ### within-project fault localization
 ```
-	python run.py --project project_name --within
+python run.py --project project_name --within
 ```
 
 ### cross-project fault localization
 ```
-	python run.py --project source_project --cross -target_name
+python run.py --project source_project --cross -target_name
 ```
