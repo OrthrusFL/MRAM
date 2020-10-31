@@ -1,23 +1,79 @@
-# MRAM 
-MRAM is a mixed RNN and Attention model for locating faulty methods when given a bug report.
+# Semantic Matcher and Learner
+## Introduction
 
-## Code revision Graph
+The Semantic Macther uses ASTNN model to embed the methods and the Wrod2vec to embed each word token in a bug report and gets the global semantic of the bug report by Bi-GRU. To measure the semantic similarity of the method embedding and bug report embedding which are not in the same vector space, a mlp is used to bridge the semantic gap of them, then the cosine similarity is calculated to get the semantic matching score. Besides, to alleviate the
+sparsity and ambiguity of information in short methods, a short method expansion algorithm is also used in the Semantic Matcher.
 
-The code revision grap is built from past code commits and bug reports,  
-which not only reveal the latentrelationships among methods to expand short methods but also provide all revisions of code and past  fixes to calculate more accurate method structured features and bug-fixing features.
-With code revision graphs, MRAM can expand short methods with their related methods.
-More implementation details are available [here](https://github.com/ysliang0108/MRAM/tree/main/graph).
+The Learner combines the semantic mathing score calcaulated by the Semantic Matcher and the other three kinds of scores(bug fixing recency score, bug fixing frequency score, revised collaborative filtering score) to select the possible buggy methods from repository and rank them by supocious score.
 
-## MRAM
-Fig.1 shows the overall architecture of MRAM, consistingof three main components:
-(1) SMNN (semantic matching network),  which uses bidi-rectional RNNs and soft attention to capture both semanticand structural information of source method so that it can bematched with bug report accurately in a unified vector space.
-(2) MENN (method expansion network), which enriches the representation of a method with short length by retrieving theinformation from its relevant methods.
-(3) FLNN (fault localization network), which predicts faultprobability of a method by combining both its implicit reference and explicit relevance to the bug report.
 
-The high-level goal of MRAM is: given a bug report R and an arbitrary method M with its corresponding features,
-MRAM predicts a high relevance score if M is a faulty method for R, and a low relevance score otherwise.
-More implementation details are available [here](https://github.com/ysliang0108/MRAM/tree/main/model).
+## Environment
 
-## dataset
-We have evaluated on five open source projects (AspectJ, Birt, JDT, SWT, and Tomcat).
-The dataset relevant to the experiment are available [here](https://jbox.sjtu.edu.cn/l/aoMeGs).
+- OS: Ubuntu 18.04.4 LST
+- Language: python 3.6.9
+- pytorch: 1.0.0
+- javalang: 0.11.0
+
+## Dataset
+ You need download the method level bug localization dataset of open-source projects (AspectJ, SWT and Tomcat) from [dataset](https://jbox.sjtu.edu.cn/l/J5z6bj).
+```
+cd MatcherAndLearner/
+mkdir dataset
+cd dataset
+unrar x dataset.rar
+```
+
+You need download the relations data of methods and commits from [here](https://jbox.sjtu.edu.cn/l/45eBpZ).
+and put it into  ```./output/project/sim/``` or specify the dir yourself in [config.py](./config.py)
+
+
+## Usage
+```
+usage: BugPecker: Locating Faulty Methods with Deep Learning on Revision Graphs
+       [-h] --project {swt,tomcat,aspectj} [--prepare] [--train] [--test]
+       [--evaluate] [--gpu GPU] [--tr TR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --project {swt,tomcat,aspectj}
+                        specify the java project to locate
+  --prepare             prepare the data for training
+  --train               train the model
+  --test                test the model
+  --evaluate            evaluate the model on test set
+  --gpu GPU             specify gpu device
+  --tr TR               specify the size of training set
+
+```
+
+### prepare
+Prepare the data for training and testing a model. 
+
+You need to run graph web service (see [RevisionAnalyzer](https://github.com/RAddRiceee/BugPecker/tree/master/RevisionAnalyzer) for help) 
+and specify the url of versionInfo service in [config.py](./config.py).
+You need to specify the project data to prepare, take 'tomcat' as an example.
+```
+	run.py --project tomcat --prepare
+```
+After the program has been successfully completed, you can see the prepared data in ```./output/tomcat/data/```.
+
+### train 
+
+To train a model for specific project.
+
+```
+	run.py --project tomcat --train
+```
+
+### test
+To get the test result of the trained model in test set for specific project.
+```
+	run.py --project tomcat --test
+```
+### evaluate
+To evaluate the test result.The metrics used to measure the result are hit@k,MAP and MRR.
+```
+	run.py --project tomcat --evaluate
+```
+## Result
+The results show that BugPecker could localize bugs at method level more precisely than the baselines ([DNNLoc-m](https://doi.org/10.1109/ICPC.2017.24) and [BLIA 1.5](https://doi.org/10.1016/j.infsof.2016.11.002)), and achieving a MAP of 0.263 and a MRR of 0.291.
