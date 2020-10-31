@@ -9,14 +9,14 @@
 
 ## Dataset
  You need download the method level bug localization dataset of open-source projects 
- (AspectJ, Birt, JDT, SWT, and Tomcat) from [dataset](https://jbox.sjtu.edu.cn/l/J5z6bj).
+ (AspectJ, Birt, JDT, SWT, and Tomcat) from [dataset](https://jbox.sjtu.edu.cn/l/9J3k8C).
 ```
 mkdir report
 cd report
 unrar x dataset.rar
 ```
 
-You need download the relations data of methods and commits from [here](https://jbox.sjtu.edu.cn/l/45eBpZ).
+You need download the relations data of methods and commits from [here](https://jbox.sjtu.edu.cn/l/9J3k8C).
 and put it into  ```./output/project_name/sim/``` or specify the dir yourself in [config.py](./config.py)
 
 
